@@ -2,8 +2,20 @@ import { Avatar, Button } from '@mui/material'
 import React from 'react'
 import styled from 'styled-components'
 import {MoreVert,ChatBubbleOutline, Search as SearchI} from '@mui/icons-material';
+import * as Emailvalidator from "email-validator"
 
 const Sidebar = () => {
+    const createChat =  (e:Event) =>{
+        const input = prompt("Please enter an email for the user you with to chat with")
+    
+        if(!input) return;
+
+        if(Emailvalidator.validate(input)){
+            // we will add the chat to the DB
+        }
+    }
+
+
   return (
     <Container>
         <Header>
@@ -18,7 +30,7 @@ const Sidebar = () => {
             <SearchI/>
             <SearchInput placeholder="Search in chats"/>
         </Search>
-        <SidebarButton>Start a new chat</SidebarButton>
+        <SidebarButton onClick={createChat}>Start a new chat</SidebarButton>
         {/* List of Chats */}
     </Container>
   )
