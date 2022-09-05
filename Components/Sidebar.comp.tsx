@@ -3,25 +3,42 @@ import React from 'react'
 import styled from 'styled-components'
 import {MoreVert,ChatBubbleOutline, Search as SearchI} from '@mui/icons-material';
 import * as Emailvalidator from "email-validator"
-
+import { auth, db } from '../firebase';
+import { addDoc, collection,  query, where } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import {useCollection} from "react-firebase-hooks/firestore"
+import ChatComp from './Chat.comp';
 const Sidebar = () => {
-    const createChat =  (e:Event) =>{
+
+    const [user] =  useAuthState(auth)
+    const userChatRef=  query(collection(db,"chats"), where("users","array-contains",user?.email))
+    const [chatsSnap] = useCollection(userChatRef)
+
+
+    const createChat = async  () =>{
         const input = prompt("Please enter an email for the user you with to chat with")
     
         if(!input) return;
 
-        if(Emailvalidator.validate(input)){
+        if(Emailvalidator.validate(input) && input !== user?.email && !chatAlreadyExists(input)){
             // we will add the chat to the DB
+                await addDoc(collection(db,"chats"),{
+                users:[user?.email,input]
+            })
         }
+        
     }
 
+    const signout = () => auth.signOut();
 
+    const chatAlreadyExists = (receiptEmailAddress:string ): boolean =>!!chatsSnap?.docs.find(chat=>chat.data().users.find(u=>u===receiptEmailAddress)?.length>0)
+    
   return (
     <Container>
         <Header>
             <UserAvatar/>
             <IconsContainer>
-                <ChatBubbleOutline/>
+                <ChatBubbleOutline onClick={signout}/>
                 <MoreVert/>
             </IconsContainer>
 
@@ -32,6 +49,9 @@ const Sidebar = () => {
         </Search>
         <SidebarButton onClick={createChat}>Start a new chat</SidebarButton>
         {/* List of Chats */}
+        {chatsSnap?.docs.map((chat)=>{
+            return <ChatComp key={chat.id} id={chat.id} users={chat.data().users}/>
+        })}
     </Container>
   )
 }   
