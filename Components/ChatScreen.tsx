@@ -8,11 +8,11 @@ import { useCollection } from 'react-firebase-hooks/firestore'
 import styled from 'styled-components'
 import { auth, db } from '../firebase'
 import getReceipentEmail from '../utils/getReceipentEmail'
+import timeago from '../utils/timeago'
 import Message from './Message'
 
 const ChatScreen = ({chat, messages}) => {
 
-  console.log({chat,messages})
   const [user]= useAuthState(auth)
   const [input,setInput] =  useState("")
   const {query:{id}} =  useRouter();
@@ -25,12 +25,9 @@ const ChatScreen = ({chat, messages}) => {
   const chatRef = doc(db, "chats",undefinedAndArrayreducer(id));
   
   const [messagesSnapshot] = useCollection(query(collection(chatRef,"messages"),where(documentId(),"==",id) ,orderBy("timestamp", "asc")))
-  
+  const [receipentSnapshot] = useCollection(query(collection(db,"users"),where("email","==", getReceipentEmail(chat.users,user))))
 
   const showMessages =  () => {
-
-    console.log("snapshot",messagesSnapshot)
-
     
     if(messagesSnapshot){
       return messagesSnapshot.docs.map(message=> <Message
@@ -65,13 +62,21 @@ const ChatScreen = ({chat, messages}) => {
     })
     setInput("")
   }
+
+  const receipent =  receipentSnapshot?.docs?.[0]?.data()
+
+  console.log(receipent?.lastSeen)
   return (
     <Container>
       <Header>
-        <Avatar/>
+        {
+          receipent? <Avatar src={receipent?.photoURL}/>:<Avatar >{getReceipentEmail(chat.users,user)[0]}</Avatar>
+        }
         <HeaderInformation>
           <h3>{getReceipentEmail(chat.users,user)}</h3>
-          <p>Last Active:</p>
+          {
+            receipentSnapshot?<p>Last Active : {timeago(receipent?.lastSeen)}</p>: <p>User not created</p>
+          }
         </HeaderInformation>
         <HeaderIcons>
           <IconButton>
