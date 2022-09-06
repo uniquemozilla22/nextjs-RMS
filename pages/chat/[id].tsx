@@ -1,4 +1,4 @@
-import { collection, CollectionReference, doc, documentId, DocumentSnapshot, getDoc, getDocs, limitToLast, orderBy, query, QuerySnapshot, where } from 'firebase/firestore'
+import { collection, CollectionReference, doc, documentId, DocumentReference, DocumentSnapshot, getDoc, getDocs, limitToLast, orderBy, query, QuerySnapshot, where } from 'firebase/firestore'
 import Head from 'next/head'
 import React from 'react'
 import styled from 'styled-components'
@@ -35,10 +35,12 @@ const ChatPage = ({ chat, messages }: ChatPagePropsI) => {
 
 export const getServerSideProps = async (context: { query: { id: string } }) => {
 
-    const Chatreference: CollectionReference  = collection(db, "chats")
-    const messegesRes: QuerySnapshot = await getDocs(query(Chatreference, orderBy("timestamp", "asc")))
+    const ChatRef:DocumentReference =   doc(db, "chats",context.query.id);
+    const MessageRef: CollectionReference  = collection(ChatRef, "messages")
+    const messegesRes: QuerySnapshot = await getDocs(query(MessageRef, orderBy("timestamp", "asc")))
     const messages = messegesRes.docs.map((data) => ({
         id: data.id,
+        timestamp:data.data().timestamp,
         ...data.data()
     })).map((message) => ({
         ...message,
