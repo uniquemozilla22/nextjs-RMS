@@ -19,7 +19,11 @@ interface IProps{
 
 const ChatComp = ({id,users}:IProps) => {
   const router = useRouter()
-  
+
+  const enterChat  = () =>{
+    router.push(`/chat/${id}`)
+  }
+
   const [user] = useAuthState(auth)
   const [receipentSnap] = useCollection(query(collection(db,"users"),where("email","==",getReceipentEmail(users,user))))
 
@@ -27,7 +31,7 @@ const ChatComp = ({id,users}:IProps) => {
 
   const receipientEmail = getReceipentEmail(users,user)
   return (
-    <Container>
+    <Container onClick={enterChat}>
       {
         receipent?<UserAvatar src={receipent?.photoURL}/>:<UserAvatar>{receipientEmail[0]}</UserAvatar>
       }
