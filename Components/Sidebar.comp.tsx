@@ -21,7 +21,6 @@ const Sidebar = () => {
         if (!input) return;
 
         if (Emailvalidator.validate(input) && input !== user?.email && !chatAlreadyExists(input)) {
-            // we will add the chat to the DB
             await addDoc(collection(db, "chats"), {
                 users: [user?.email, input]
             })
@@ -31,7 +30,7 @@ const Sidebar = () => {
 
     const signout = () => auth.signOut();
 
-    const chatAlreadyExists = (receiptEmailAddress: string): boolean => !!chatsSnap?.docs.find(chat => chat.data().users.find(u => u === receiptEmailAddress)?.length > 0)
+    const chatAlreadyExists = (receiptEmailAddress: string): boolean => !!chatsSnap?.docs.find(chat => chat.data().users.find((u: any) => u === receiptEmailAddress)?.length > 0)
 
     return (
         <Container>

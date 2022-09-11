@@ -11,12 +11,12 @@ import { auth, db } from '../firebase'
 import getReceipentEmail from '../utils/getReceipentEmail'
 import Message from './Message'
 
-const ChatScreen = ({ chat, messages }) => {
+const ChatScreen = ({ chat, messages }: any) => {
 
   const [user] = useAuthState(auth)
   const [input, setInput] = useState("")
   const { query: { id } } = useRouter();
-  const undefinedAndArrayreducer = (id) => {
+  const undefinedAndArrayreducer = (id: any) => {
     if (id) {
       if (Array.isArray(id)) {
         return id[0]
@@ -40,7 +40,7 @@ const ChatScreen = ({ chat, messages }) => {
       )
     }
     else {
-      return JSON.parse(messages).map(message => {
+      return JSON.parse(messages).map((message: any) => {
         return <Message
           key={message.id}
           user={message.user}
@@ -52,7 +52,7 @@ const ChatScreen = ({ chat, messages }) => {
 
 
 
-  const sendMessage = async (e) => {
+  const sendMessage = async (e: any) => {
     if (!user) return
     if (!id || typeof id === "object") return
     e.preventDefault();
