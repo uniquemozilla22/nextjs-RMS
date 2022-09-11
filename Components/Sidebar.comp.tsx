@@ -1,60 +1,61 @@
-import { Avatar, Button } from '@mui/material'
+import { Avatar, Button, Tooltip } from '@mui/material'
 import React from 'react'
 import styled from 'styled-components'
-import {MoreVert,ChatBubbleOutline, Search as SearchI} from '@mui/icons-material';
+import { MoreVert, ChatBubbleOutline, Search as SearchI, Logout } from '@mui/icons-material';
 import * as Emailvalidator from "email-validator"
 import { auth, db } from '../firebase';
-import { addDoc, collection,  query, where } from 'firebase/firestore';
+import { addDoc, collection, query, where } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {useCollection} from "react-firebase-hooks/firestore"
+import { useCollection } from "react-firebase-hooks/firestore"
 import ChatComp from './Chat.comp';
 const Sidebar = () => {
 
-    const [user] =  useAuthState(auth)
-    const userChatRef=  query(collection(db,"chats"), where("users","array-contains",user?.email))
+    const [user] = useAuthState(auth)
+    const userChatRef = query(collection(db, "chats"), where("users", "array-contains", user?.email))
     const [chatsSnap] = useCollection(userChatRef)
 
 
-    const createChat = async  () =>{
+    const createChat = async () => {
         const input = prompt("Please enter an email for the user you with to chat with")
-    
-        if(!input) return;
 
-        if(Emailvalidator.validate(input) && input !== user?.email && !chatAlreadyExists(input)){
+        if (!input) return;
+
+        if (Emailvalidator.validate(input) && input !== user?.email && !chatAlreadyExists(input)) {
             // we will add the chat to the DB
-                await addDoc(collection(db,"chats"),{
-                users:[user?.email,input]
+            await addDoc(collection(db, "chats"), {
+                users: [user?.email, input]
             })
         }
-        
+
     }
 
     const signout = () => auth.signOut();
 
-    const chatAlreadyExists = (receiptEmailAddress:string ): boolean =>!!chatsSnap?.docs.find(chat=>chat.data().users.find(u=>u===receiptEmailAddress)?.length>0)
-    
-  return (
-    <Container>
-        <Header>
-            <UserAvatar/>
-            <IconsContainer>
-                <ChatBubbleOutline onClick={signout}/>
-                <MoreVert/>
-            </IconsContainer>
+    const chatAlreadyExists = (receiptEmailAddress: string): boolean => !!chatsSnap?.docs.find(chat => chat.data().users.find(u => u === receiptEmailAddress)?.length > 0)
 
-        </Header>
-        <Search>
-            <SearchI/>
-            <SearchInput placeholder="Search in chats"/>
-        </Search>
-        <SidebarButton onClick={createChat}>Start a new chat</SidebarButton>
-        {/* List of Chats */}
-        {chatsSnap?.docs.map((chat)=>{
-            return <ChatComp key={chat.id} id={chat.id} users={chat.data().users}/>
-        })}
-    </Container>
-  )
-}   
+    return (
+        <Container>
+            <Header>
+                <UserAvatar />
+                <IconsContainer>
+                    <Tooltip title="Logout">
+                        <Logout onClick={signout} />
+                    </Tooltip>
+                </IconsContainer>
+
+            </Header>
+            <Search>
+                <SearchI />
+                <SearchInput placeholder="Search in chats" />
+            </Search>
+            <SidebarButton onClick={createChat}>Start a new chat</SidebarButton>
+            {/* List of Chats */}
+            {chatsSnap?.docs.map((chat) => {
+                return <ChatComp key={chat.id} id={chat.id} users={chat.data().users} />
+            })}
+        </Container>
+    )
+}
 
 
 
@@ -77,7 +78,7 @@ overflow:scroll;
 scrollbar-width:none;
 `;
 
-const Search =  styled.div`
+const Search = styled.div`
 display:flex;
 align-items: center;
 padding:1rem;
@@ -114,7 +115,7 @@ border-bottom: 1px solid whitesmoke;
 }
 `
 
-const UserAvatar =  styled(Avatar)`
+const UserAvatar = styled(Avatar)`
 cursor:pointer;
 :hover{
     opacity:0.8;
@@ -122,4 +123,4 @@ cursor:pointer;
 
 `;
 
-const IconsContainer =styled.div``;
+const IconsContainer = styled.div``;
