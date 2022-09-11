@@ -75,7 +75,7 @@ const ChatScreen = ({chat, messages}) => {
         <HeaderInformation>
           <h3>{getReceipentEmail(chat.users,user)}</h3>
           {
-            receipentSnapshot?<p>Last Active : {timeago(receipent?.lastSeen)}</p>: <p>User not created</p>
+            receipentSnapshot?<p>Last Active : {receipent?.lastSeen.toDate()?timeago(receipent?.lastSeen):"Unavailable"}</p>: <p>Loading...</p>
           }
         </HeaderInformation>
         <HeaderIcons>
