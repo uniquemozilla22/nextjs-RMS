@@ -1,12 +1,15 @@
 {
   "name": "whatsapp_clone_nextjs_firebase",
+  "homepage": "https://uniquemozilla22.github.io/nextjs-whatsapp",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
@@ -15,6 +18,7 @@
     "@mui/material": "^5.10.3",
     "email-validator": "^2.0.4",
     "firebase": "^9.9.4",
+    "gh-pages": "^4.0.0",
     "moment": "^2.29.4",
     "next": "12.2.5",
     "react": "18.2.0",

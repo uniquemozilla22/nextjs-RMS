@@ -1,8 +1,8 @@
 
 
 
-const getReceipentEmail = ( users, userLoggedIn)=>{
-   return  users?.filter(userToFilter=> userToFilter !== userLoggedIn.email)[0]
+const getReceipentEmail = ( users:any, userLoggedIn:any)=>{
+   return  users?.filter((userToFilter:any)=> userToFilter !== userLoggedIn.email)[0]
 }
 
 
